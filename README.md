@@ -7,7 +7,8 @@ TO activate the virtual environment run Scripts\activate from the root
 Requirement: install flask
 pip install flask
 
-to setup db
-from python shell
->>> from datalogger import db
->>> db.create_all()
+then
+.\Script\activate #activates the virtualenv
+pip install flask_sqlalchemy
+
+py main.py #runs the app
