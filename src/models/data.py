@@ -1,4 +1,3 @@
-
 from src import db
 
 class Data(db.Model):

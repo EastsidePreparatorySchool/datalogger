@@ -128,3 +128,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#keep the db out of the repo
+src/data/sensor.db
