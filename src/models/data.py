@@ -53,7 +53,7 @@ def find_or_null(attrs, key):
   if key in attrs:
     return attrs[key]
   else:
-    return None
+    return ""
 
 
 #adding records

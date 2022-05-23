@@ -1,3 +1,4 @@
+from asyncio.subprocess import STDOUT
 from flask import Blueprint, render_template, request
 from src.models.data import Data
 from src import db
@@ -38,6 +39,12 @@ def device_data_and_key(username, device, key):
     records = Data.query.filter_by(username=username, device_id=device, key=key).all()
     return json.dumps([r.as_dict() for r in records])
 
+@bp.route("/auth/callback")
+def auth_callback():
+    params = form_or_args(request)
+    print(params)
+    return json.dumps(params)
+    
 def form_or_args(request):
     if request.form:
         params = request.form
