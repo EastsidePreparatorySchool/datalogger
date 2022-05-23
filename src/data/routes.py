@@ -48,6 +48,11 @@ def auth_callback():
 def form_or_args(request):
     if request.form:
         params = request.form
+    elif request.data:
+        params = request.data
     else:
         params = request.args
     return params
+
+
+    # http_post('https://eps-datalogger.herokuapp.com', [('device_id', 'huzzah1')])

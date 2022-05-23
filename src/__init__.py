@@ -21,8 +21,8 @@ def init_app():
         from src.models.data import Data  # this import allows us to create the table if it does not exist
         try:
           db.create_all()
-        except:
-          print("tables likely already created")  
+        except Exception as error:
+          print(f'tables likely already created {error}')  
 
         from src.data.routes import bp as routes
         app.register_blueprint(routes)
