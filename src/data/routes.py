@@ -48,8 +48,8 @@ def auth_callback():
 def form_or_args(request):
     if request.form:
         params = request.form
-    elif request.data:
-        params = request.data
+    elif request.json:
+        params = request.get_json
     else:
         params = request.args
     return params
