@@ -14,6 +14,8 @@ def init_app():
     
 
     app.config.from_object('src.config.Config')  # configure app using the Config class defined in src/config.py
+    # app.config.from_object(os.environ['APP_SETTINGS'])  # configure app using the Config class defined in src/config.py
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)  # initialise the database for the app
 
