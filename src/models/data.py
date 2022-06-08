@@ -42,6 +42,9 @@ class Data(db.Model):
     self.float2 = find_or_null(attrs, "float2")
     self.int1 = find_or_null(attrs, "int1")
     self.int2 = find_or_null(attrs, "int2")
+  
+  def __repr__(self):
+    return f"{self.device_id}: {self.username}"
 
   def as_dict(self):
     return {c.name: getattr(self, c.name) for c in self.__table__.columns}

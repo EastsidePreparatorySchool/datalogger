@@ -3,7 +3,7 @@ from src import init_app #, request, json, db
 
 app = init_app()
 
-if __name__ == '__main__':
+if __name__ == '__app__':
       app.run(debug = True) #app.run(host, prot, debug, options)
 
 #SQlite https://blog.appseed.us/flask-how-to-connect-to-mysql/
