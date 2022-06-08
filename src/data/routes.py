@@ -39,6 +39,11 @@ def device_data_and_key(username, device, key):
     records = Data.query.filter_by(username=username, device_id=device, key=key).all()
     return json.dumps([r.as_dict() for r in records])
 
+@bp.route("/api/data/all")
+def all_data():
+    records = Data.query.all()
+    return json.dumps([r.as_dict() for r in records])
+
 @bp.route("/auth/callback")
 def auth_callback():
     params = form_or_args(request)
