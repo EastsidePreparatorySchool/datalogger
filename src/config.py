@@ -6,7 +6,7 @@ class Config:
     # SECRET_KEY = os.environ.get("SECRET_KEY", os.urandom(24))
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SQLALCHEMY_DATABASE_URI = 'sqlite:///data/sensor.db'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL').replace("postgres://", "postgresql://", 1)
 
 class ProductionConfig(Config):
     DEBUG = False
