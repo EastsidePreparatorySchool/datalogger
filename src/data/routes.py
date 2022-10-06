@@ -26,29 +26,30 @@ def data_add(username):
     record.username = username #force username
     db.session.add(record)
     db.session.commit()
-    return json.dumps(record.as_dict())  #({"status": "ok", "record_id": record.id})
+    #return json.dumps(record.as_dict())  #({"status": "ok", "record_id": record.id})
+    return json.dumps(record.as_dict(), indent=4, sort_keys=True, default=str) #to encode datetimes
 
 @bp.route("/api/data/<username>/<device>")
 def device_data(username,device):
     records = Data.query.filter_by(username=username, device_id=device, key=None).all()
     
-    return json.dumps([r.as_dict() for r in records])
+    return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
 @bp.route("/api/data/<username>/<device>/<key>")
 def device_data_and_key(username, device, key):
     records = Data.query.filter_by(username=username, device_id=device, key=key).all()
-    return json.dumps([r.as_dict() for r in records])
+    return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
 @bp.route("/api/data/all")
 def all_data():
     records = Data.query.all()
-    return json.dumps([r.as_dict() for r in records])
+    return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
 @bp.route("/auth/callback")
 def auth_callback():
     params = form_or_args(request)
     print(params)
-    return json.dumps(params)
+    return json.dumps(params, indent=4, sort_keys=True, default=str)
     
 def form_or_args(request):
     if request.form:

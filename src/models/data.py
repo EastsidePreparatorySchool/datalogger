@@ -1,5 +1,6 @@
 from src import db
 
+
 class Data(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(255))
@@ -21,6 +22,8 @@ class Data(db.Model):
   float2 = db.Column(db.Float)
   int1 = db.Column(db.Integer)
   int2 = db.Column(db.Integer)
+  time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
+  time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now(), server_default=db.func.now())
   
   def __init__(self, attrs):
     self.username = find_or_null(attrs, "username")
