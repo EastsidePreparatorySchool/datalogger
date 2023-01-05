@@ -7,16 +7,19 @@ TO activate the virtual environment run Scripts\activate from the root
 Requirement: install flask
 pip install flask
 
-then
+then (cmd works best)
 .\Script\activate #activates the virtualenv
-pip install flask_sqlalchemy
-pip install flask_migrate
-pip install psycopg2
+pip install -r requirements.txt
 
 you will also need postges as a database to work with locally
-set envi variable
-cmd> set DATABASE_URL=postgresql://[user[:password]@][netloc][:port][/dbname]
-ps> $env:DATABASE_URL="postgresql://[user[:password]@][netloc][:port][/dbname]"
+You can set environment variables in a .env file in the root of the directory
+/.env
+
+`
+export APP_SETTING="config.DevelopmentConfig"
+export DATABASE_URL="postgresql://user:pass@localhost:5432/sensor"
+export FLASK_APP="app"
+`
 
 Then create a database with the same name in pgAdmin owned by the user in the environment variable string
 then
