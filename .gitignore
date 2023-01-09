@@ -131,3 +131,7 @@ dmypy.json
 
 #keep the db out of the repo
 src/data/sensor.db
+
+# helper apps
+Scripts/pycodestyle.exe
+Scripts/autopep8.exe
