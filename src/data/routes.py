@@ -29,16 +29,38 @@ def data_add(username):
     #return json.dumps(record.as_dict())  #({"status": "ok", "record_id": record.id})
     return json.dumps(record.as_dict(), indent=4, sort_keys=True, default=str) #to encode datetimes
 
+# Note, any new routes must have unique number of route parameters (e.g. cannot have two routes with 2 params)
 @bp.route("/api/data/<username>/<device>")
 def device_data(username,device):
     records = Data.query.filter_by(username=username, device_id=device, key=None).all()
-    
     return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
-@bp.route("/api/data/<username>/<device>/<key>")
-def device_data_and_key(username, device, key):
-    records = Data.query.filter_by(username=username, device_id=device, key=key).all()
+# NEW: query by username, deviceid, and string1 ("test") - TODO string1 filter doesn't work
+@bp.route("/api/data/<username>/<device>/<string1>")
+def device_data_username_device_string1(username,device,string1):
+    records = Data.query.filter_by(username=username, device_id=device, string1=string1, key=None).all()
     return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
+
+@bp.route("/api/data/<username>/<device>/<string1>/<key>")
+def device_data_and_key(username, device, string1, key):
+    records = Data.query.filter_by(username=username, device_id=device, string1=string1, key=key).all()
+    return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
+
+# NEW: query by area
+# also new route path: /api/data/area
+@bp.route("/api/data/area/<area>")
+def device_data_area(area):
+    records = Data.query.filter_by(area=area, key=None).all()
+    return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
+
+# NEW: query by area and string1 ("test") - TODO string1 filter doesn't work
+@bp.route("/api/data/area/<area>/<string1>")
+def device_data_area_string1(area, string1):
+    records = Data.query.filter_by(area=area, string1=string1, key=None).all()
+    return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
+
+
+
 
 @bp.route("/api/data/all")
 def all_data():
