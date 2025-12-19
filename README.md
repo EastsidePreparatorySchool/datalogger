@@ -4,12 +4,12 @@ A web API to ingest and report back IoT data for the Topics in CS course
 this has been verified to work with python 3.10 and 3.12
 
 Create and activate a virtual environemnt in powershell
-`
+```
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m ensurepip --default-pip
 python -m pip install --upgrade pip
-`
+```
 
 Requirement: install flask
 pip install flask
@@ -31,20 +31,20 @@ In postgress create a new empty database named sensor
 You can set environment variables in a .env file in the root of the directory
 /.env
 
-`
+```
 export APP_SETTING="config.DevelopmentConfig"
 export DATABASE_URL="postgresql://user:pass@localhost:5432/sensor"
 export FLASK_APP="app"
-`
+```
 
 add a new pyenv.cfg file to the datalogger folder with path and version info of your python interpreter
 example below
 
-`
+```
 home = C:\Users\msudo\AppData\Local\Microsoft\WindowsApps
 include-system-site-packages = false
 version = 3.10.9
-`
+```
 
 Run the app
 
@@ -63,13 +63,13 @@ locally, adjust the model by adding to the table model, for example in
 src/models/data.py
 
 add some new columns
-`
+```
 class Data(db.model):
   ...
   ...
   time_created = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
   time_updated = db.Column(db.DateTime(timezone=True), onupdate=db.func.now(), server_default=db.func.now())
-`
+```
 
 in cmd> `flask db migrate` #that will generate a migration file based on those changes in /migrations/version/<random#>/py
 
@@ -92,7 +92,7 @@ To deploy changes to the EPS server, run the following:
 
 output should look something like this:
 
-`
+```
 C:\Users\msudo\GitHub\datalogger\src\data>git push heroku main
 Enumerating objects: 9, done.
 Counting objects: 100% (9/9), done.
@@ -125,4 +125,4 @@ remote:
 remote: Verifying deploy... done.
 To https://git.heroku.com/eps-datalogger.git
    e9bf002..812ce7e  main -> main
-`
+```
