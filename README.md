@@ -1,20 +1,33 @@
 # datalogger
 A web API to ingest and report back IoT data for the Topics in CS course
 
+this has been verified to work with python 3.10 and 3.12
 
-TO activate the virtual environment run Scripts\activate from the root
+Create and activate a virtual environemnt in powershell
+`
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m ensurepip --default-pip
+python -m pip install --upgrade pip
+`
 
 Requirement: install flask
 pip install flask
 
-if your venv is missing pip, install it first:
-python -m ensurepip --default-pip
 
-then (cmd works best)
-.\Script\activate #activates the virtualenv
+Install flask and db/migration dependencies (known to work with python 3.10 and 3.12)
 pip install -r requirements.txt
 
 you will also need postges as a database to work with locally
+
+Install postgres and pgadmin locally
+Settings
+ - host: localhost
+ - port: 5432
+ - postgres username and password
+
+In postgress create a new empty database named sensor
+
 You can set environment variables in a .env file in the root of the directory
 /.env
 
@@ -33,8 +46,7 @@ include-system-site-packages = false
 version = 3.10.9
 `
 
-Then create a database with the same name in pgAdmin owned by the user in the environment variable string
-then
+Run the app
 
 `flask run` or `python -m flask run`
 
