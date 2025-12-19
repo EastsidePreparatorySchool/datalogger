@@ -12,11 +12,15 @@ python -m pip install --upgrade pip
 ```
 
 Requirement: install flask
+```
 pip install flask
+```
 
 
 Install flask and db/migration dependencies (known to work with python 3.10 and 3.12)
+```
 pip install -r requirements.txt
+```
 
 you will also need postges as a database to work with locally
 
