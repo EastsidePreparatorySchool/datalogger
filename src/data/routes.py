@@ -35,10 +35,10 @@ def device_data(username,device):
     records = Data.query.filter_by(username=username, device_id=device, key=None).all()
     return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
-# NEW: query by username, deviceid, and string1 ("test")
-@bp.route("/api/data/<username>/<device>/<string1>")
-def device_data_username_device_string1(username,device,string1):
-    records = Data.query.filter_by(username=username, device_id=device, string1=string1, key=None).all()
+# NEW: query by username, deviceid, and phase ("test1")
+@bp.route("/api/data/<username>/<device>/<phase>")
+def device_data_username_device_string1(username,device,phase):
+    records = Data.query.filter_by(username=username, device_id=device, phase=phase, key=None).all()
     return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
 @bp.route("/api/data/<username>/<device>/<string1>/<key>")
@@ -53,10 +53,10 @@ def device_data_area(area):
     records = Data.query.filter_by(area=area, key=None).all()
     return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
-# NEW: query by area and string1 ("test")
-@bp.route("/api/data/area/<area>/<string1>")
-def device_data_area_string1(area, string1):
-    records = Data.query.filter_by(area=area, string1=string1, key=None).all()
+# NEW: query by area and phase ("test1")
+@bp.route("/api/data/area/<area>/<phase>")
+def device_data_area_string1(area, phase):
+    records = Data.query.filter_by(area=area, phase=phase, key=None).all()
     return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
 
