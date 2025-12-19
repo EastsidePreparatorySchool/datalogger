@@ -30,38 +30,44 @@ def data_add(username):
     return json.dumps(record.as_dict(), indent=4, sort_keys=True, default=str) #to encode datetimes
 
 # Note, any new routes must have unique number of route parameters (e.g. cannot have two routes with 2 params)
+
+# query by username and device
+# sorted by time_created
 @bp.route("/api/data/<username>/<device>")
 def device_data(username,device):
-    records = Data.query.filter_by(username=username, device_id=device, key=None).all()
+    records = Data.query.filter_by(username=username, device_id=device, key=None).order_by(Data.time_created.asc()).all()
     return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
 # NEW: query by username, deviceid, and phase ("test1")
+# sorted by time_created
 @bp.route("/api/data/<username>/<device>/<phase>")
 def device_data_username_device_string1(username,device,phase):
-    records = Data.query.filter_by(username=username, device_id=device, phase=phase, key=None).all()
+    records = Data.query.filter_by(username=username, device_id=device, phase=phase, key=None).order_by(Data.time_created.asc()).all()
     return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
+# query by username, device, and key
 @bp.route("/api/data/<username>/<device>/<string1>/<key>")
 def device_data_and_key(username, device, string1, key):
-    records = Data.query.filter_by(username=username, device_id=device, string1=string1, key=key).all()
+    records = Data.query.filter_by(username=username, device_id=device, string1=string1, key=key).order_by(Data.time_created.asc()).all()
     return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
 # NEW: query by area
 # also new route path: /api/data/area
+# sorted by time_created
 @bp.route("/api/data/area/<area>")
 def device_data_area(area):
-    records = Data.query.filter_by(area=area, key=None).all()
+    records = Data.query.filter_by(area=area, key=None).order_by(Data.time_created.asc()).all()
     return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
 # NEW: query by area and phase ("test1")
+# sorted by time_created
 @bp.route("/api/data/area/<area>/<phase>")
 def device_data_area_string1(area, phase):
-    records = Data.query.filter_by(area=area, phase=phase, key=None).all()
+    records = Data.query.filter_by(area=area, phase=phase, key=None).order_by(Data.time_created.asc()).all()
     return json.dumps([r.as_dict() for r in records], indent=4, sort_keys=True, default=str)
 
 
-
-
+# returns all records
 @bp.route("/api/data/all")
 def all_data():
     records = Data.query.all()
