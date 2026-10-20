@@ -11,3 +11,4 @@
 - Removed `Procfile`.
 - Schema is created by `db.create_all()` at startup; alembic migrations are
   not run in the container.
+- Bumped gunicorn to 23.0.0 (20.1.0 needs pkg_resources, absent in python:3.12-slim).
