@@ -5,8 +5,17 @@ def add_reading(client, **params):
     return client.post("/api/data/jbriggs/add", query_string=params)
 
 
-def test_home_responds(client):
-    assert client.get("/").data == b"helloflask"
+def test_home_page_documents_the_add_endpoint_for_this_host(client):
+    page = client.get("/").get_data(as_text=True)
+
+    assert "http://localhost/api/data/&lt;username&gt;/add" in page
+
+
+def test_home_page_lists_the_fields_a_device_can_send(client):
+    page = client.get("/").get_data(as_text=True)
+
+    assert "<code>temperature</code>" in page
+    assert "<code>time_created</code>" not in page
 
 
 def test_added_reading_is_returned_for_its_device(client):

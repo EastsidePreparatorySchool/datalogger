@@ -63,6 +63,11 @@ class Data(db.Model):
   def columns():
     return [c.name for c in Data.__table__.columns]
 
+  def settable_columns():
+    """Columns a device may send (the rest are set by the server)."""
+    server_set = {"id", "username", "time_created", "time_updated"}
+    return [c for c in Data.columns() if c not in server_set]
+
 def find_or_null(attrs, key):
   if key in attrs:
     return attrs[key]

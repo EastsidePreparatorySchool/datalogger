@@ -12,3 +12,9 @@
 - Schema is created by `db.create_all()` at startup; alembic migrations are
   not run in the container.
 - Bumped gunicorn to 23.0.0 (20.1.0 needs pkg_resources, absent in python:3.12-slim).
+
+## Home page
+- `/` now renders `src/templates/home.html`: live stats (`src/data/stats.py`),
+  getting-started steps, ESP32 POST example, and read-endpoint reference.
+- Field list on the page comes from `Data.settable_columns()`, so it follows the model.
+- Replaced the `helloflask` home test with tests for the page; added `tests/test_stats.py`.

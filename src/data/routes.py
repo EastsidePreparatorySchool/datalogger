@@ -1,6 +1,7 @@
 from asyncio.subprocess import STDOUT
 from flask import Blueprint, render_template, request
 from src.models.data import Data
+from src.data import stats
 from src import db
 import json
 
@@ -10,7 +11,12 @@ bp = Blueprint('data', __name__)
 
 @bp.route("/")
 def home():
-  return "helloflask";
+  return render_template(
+    "home.html",
+    stats=stats.summary(),
+    base_url=request.host_url.rstrip("/"),
+    fields=Data.settable_columns(),
+  )
 
 @bp.route("/test/<reflect>")
 def test(reflect):
