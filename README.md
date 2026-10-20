@@ -130,3 +130,11 @@ remote: Verifying deploy... done.
 To https://git.heroku.com/eps-datalogger.git
    e9bf002..812ce7e  main -> main
 ```
+
+## Deployment (Portainer)
+
+Pushes to `main` run the tests, then publish
+`ghcr.io/eastsidepreparatoryschool/datalogger:latest`. In Portainer, create a
+stack from `compose.yaml`, set `POSTGRES_PASSWORD`, and route your reverse
+proxy to `web:8000` on the external `proxy` network. Run the tests locally with
+`DATABASE_URL=... python -m pytest` (needs `requirements-dev.txt`).

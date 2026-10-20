@@ -1,0 +1,48 @@
+# Portainer stack for datalogger. Set POSTGRES_PASSWORD in the stack's
+# environment variables. The external `proxy` network must already exist
+# (same one mycelio uses); point the reverse proxy at web:8000.
+services:
+  db:
+    image: postgres:17.4
+    healthcheck:
+      test: ["CMD", "pg_isready", "--username=datalogger"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      POSTGRES_USER: datalogger
+      POSTGRES_DB: datalogger
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - app
+
+  web:
+    image: ${WEB_IMAGE:-ghcr.io/eastsidepreparatoryschool/datalogger:latest}
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      DATABASE_URL: postgresql://datalogger:${POSTGRES_PASSWORD}@db:5432/datalogger
+    expose:
+      - "8000"
+    networks:
+      - proxy
+      - app
+
+volumes:
+  db_data:
+networks:
+  app: {}
+  proxy:
+    external: true
