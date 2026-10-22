@@ -1,0 +1,46 @@
+{% extends "admin/base.html" %}
+{% block title %}SQL{% endblock %}
+{% block body %}
+<h2>SQL console</h2>
+{% if pending %}
+<div class="notice pending">
+  <b>{{ pending.steps|length }} change(s) staged, not yet committed.</b>
+  Backup taken first: <code>{{ pending.backup }}</code>. Auto-rollback in {{ pending.seconds_left }} s of inactivity (locks are held until then).
+  <ol>{% for step in pending.steps %}<li><code>{{ step.label }}</code> &mdash; {{ step.rows }} row(s)</li>{% endfor %}</ol>
+  <p>SELECT queries below now run <i>inside</i> the staged transaction, so you can check the result before deciding.</p>
+  <form method="post" action="{{ url_for('admin.commit_pending') }}" style="display:inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="primary">Commit changes</button></form>
+  <form method="post" action="{{ url_for('admin.rollback_pending') }}" style="display:inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="danger">Roll back</button></form>
+</div>
+{% endif %}
+<p class="muted">The table is <code>data</code>. Queries run in a read-only transaction with a 10 second limit and show at most 500 rows.</p>
+<div class="examples">
+  {% for title, example in examples %}<button type="button" data-sql="{{ example }}">{{ title }}</button>{% endfor %}
+</div>
+<form method="post" id="sql-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <p><textarea name="sql" id="sql" spellcheck="false" required>{{ sql }}</textarea></p>
+  <p><label><input type="checkbox" name="allow_write" id="allow-write" {% if allow_write %}checked{% endif %}> Allow changes (INSERT, UPDATE, DELETE, DDL). Takes a backup, then stages the change for you to commit or roll back.</label></p>
+  <button class="primary" name="action" value="run">Run</button>
+  <button name="action" value="csv">Run and download CSV</button>
+</form>
+
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+{% if result %}
+  <p class="muted">
+    {% if result.columns %}{{ result.rows|length }} row{{ '' if result.rows|length == 1 else 's' }}{% if result.truncated %} (truncated, add a LIMIT or narrow the query){% endif %}
+    {% else %}{{ result.rows_affected }} row{{ '' if result.rows_affected == 1 else 's' }} affected{% if pending %} (staged){% endif %}{% endif %}
+    · {{ result.elapsed_ms }} ms</p>
+  {% if result.columns %}
+  <div class="scroll"><table>
+    <tr>{% for c in result.columns %}<th>{{ c }}</th>{% endfor %}</tr>
+    {% for row in result.rows %}<tr>{% for v in row %}<td class="cell">{% if v is none %}<span class="null">NULL</span>{% else %}{{ v }}{% endif %}</td>{% endfor %}</tr>{% endfor %}
+  </table></div>
+  {% endif %}
+{% endif %}
+<script>
+  document.querySelectorAll('[data-sql]').forEach(b =>
+    b.addEventListener('click', () => { document.getElementById('sql').value = b.dataset.sql; }));
+</script>
+{% endblock %}

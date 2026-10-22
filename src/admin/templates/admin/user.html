@@ -1,0 +1,39 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ username }}{% endblock %}
+{% block body %}
+<h2>{{ username }}</h2>
+{% if stats %}
+<div class="stats">
+  <div class="stat"><b>{{ stats.readings }}</b>readings</div>
+  <div class="stat"><b>{{ stats.devices }}</b>devices</div>
+  <div class="stat"><b>{{ stats.last_24h }}</b>last 24 hours</div>
+  <div class="stat"><b>{{ stats.last_hour }}</b>last hour</div>
+</div>
+<p>{% for f in stats.flags %}<span class="flag">{{ f }}</span>{% endfor %}</p>
+
+<h2>Devices</h2>
+<div class="scroll"><table>
+  <tr><th>device_id</th><th class="num">Readings</th><th>Last reading</th></tr>
+  {% for device, count, last in devices %}
+  <tr><td>{% if device %}{{ device }}{% else %}<span class="null">NULL</span>{% endif %}</td><td class="num">{{ count }}</td><td>{{ last.strftime("%Y-%m-%d %H:%M:%S") }}</td></tr>
+  {% endfor %}
+</table></div>
+
+<h2>Most recent readings</h2>
+<div class="scroll"><table>
+  <tr><th>Time</th><th>device_id</th><th>phase</th><th>area</th><th>temperature</th><th>humidity</th><th>light</th><th>string1</th><th>error</th></tr>
+  {% for r in recent %}
+  <tr><td>{{ r.time_created.strftime("%Y-%m-%d %H:%M:%S") }}</td><td>{{ r.device_id or '' }}</td><td>{{ r.phase or '' }}</td><td>{{ r.area or '' }}</td><td>{{ r.temperature if r.temperature is not none else '' }}</td><td>{{ r.humidity if r.humidity is not none else '' }}</td><td>{{ r.light if r.light is not none else '' }}</td><td>{{ r.string1 or '' }}</td><td>{{ r.error or '' }}</td></tr>
+  {% endfor %}
+</table></div>
+
+<h2>Delete this user's data</h2>
+<form method="post" action="{{ url_for('admin.delete_user', username=username) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <p class="muted">Backs up the database, then stages the removal of all {{ stats.readings }} readings posted as <b>{{ username }}</b>. Nothing is final until you commit it on the SQL page.</p>
+  <button class="danger">Stage deletion</button>
+</form>
+{% else %}
+<p class="muted">No readings stored for this username.</p>
+{% endif %}
+{% endblock %}

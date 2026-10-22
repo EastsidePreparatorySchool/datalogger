@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block body %}
+<h2>Database</h2>
+<div class="stats">
+  <div class="stat"><b>{{ human_bytes(overview.database_bytes) }}</b>database size</div>
+  <div class="stat"><b>{{ overview.readings }}</b>readings</div>
+  <div class="stat"><b>{% if overview.bytes_per_reading %}{{ human_bytes(overview.bytes_per_reading) }}{% else %}–{% endif %}</b>per reading (incl. indexes)</div>
+  <div class="stat"><b>{{ users|length }}</b>usernames</div>
+</div>
+<div class="scroll"><table>
+  <tr><th>Table</th><th class="num">Size</th></tr>
+  {% for t in overview.tables %}<tr><td>{{ t.name }}</td><td class="num">{{ human_bytes(t.bytes) }}</td></tr>{% endfor %}
+</table></div>
+
+<h2>Readings per day <span class="muted">(last 14 days)</span></h2>
+{% if days %}
+<div class="scroll"><table>
+  {% for day, count in days %}
+  <tr><td>{{ day }}</td><td class="num">{{ count }}</td><td style="width:60%"><div class="bar" style="width:{{ (count * 100 / busiest_day)|round(1) }}%"></div></td></tr>
+  {% endfor %}
+</table></div>
+{% else %}<p class="muted">No readings in the last 14 days.</p>{% endif %}
+
+<h2>Usage by username</h2>
+<p class="muted">Flags are hints to review, not verdicts: <i>high rate</i> (1200+ posts in the last hour), <i>many devices</i> (8+), <i>unusual username</i> (not letters, digits, <code>_ . -</code>, max 32), <i>missing device_id</i>.</p>
+<div class="scroll"><table>
+  <tr><th>Username</th><th class="num">Readings</th><th class="num">Devices</th><th class="num">24 h</th><th class="num">1 h</th><th>First</th><th>Last</th><th>Flags</th></tr>
+  {% for u in users %}
+  <tr>
+    <td>{% if u.username %}<a href="{{ url_for('admin.user', username=u.username) }}">{{ u.username }}</a>{% else %}<span class="null">(none)</span>{% endif %}</td>
+    <td class="num">{{ u.readings }}</td><td class="num">{{ u.devices }}</td>
+    <td class="num">{{ u.last_24h }}</td><td class="num">{{ u.last_hour }}</td>
+    <td>{{ u.first_seen.strftime("%Y-%m-%d %H:%M") }}</td><td>{{ u.last_seen.strftime("%Y-%m-%d %H:%M") }}</td>
+    <td>{% for f in u.flags %}<span class="flag">{{ f }}</span>{% endfor %}</td>
+  </tr>
+  {% else %}<tr><td colspan="8" class="muted">No readings yet.</td></tr>{% endfor %}
+</table></div>
+
+<h2>Backups</h2>
+<p class="muted">A backup is taken automatically before any change from the console, and the newest 5 are kept. They are copies inside this same database server (schemas named <code>backup_…</code>, times in UTC), for undoing mistakes.</p>
+<form method="post" action="{{ url_for('admin.back_up_now') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button>Back up now</button>
+</form>
+{% if backups %}
+<div class="scroll"><table>
+  <tr><th>Taken (UTC)</th><th>Schema</th><th class="num">Size</th><th></th></tr>
+  {% for b in backups %}
+  <tr><td>{{ b.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</td><td><code>{{ b.schema }}</code></td><td class="num">{{ human_bytes(b.bytes) }}</td>
+      <td><a href="{{ url_for('admin.sql', sql=b.restore_deleted_rows_sql) }}">Restore deleted rows…</a></td></tr>
+  {% endfor %}
+</table></div>
+{% endif %}
+{% endblock %}

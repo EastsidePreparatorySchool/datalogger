@@ -138,3 +138,32 @@ Pushes to `main` run the tests, then publish
 stack from `compose.yaml`, set `POSTGRES_PASSWORD`, and route your reverse
 proxy to `web:8000` on the external `proxy` network. Run the tests locally with
 `DATABASE_URL=... python -m pytest` (needs `requirements-dev.txt`).
+
+
+## Teacher admin area
+
+`/admin` is a password-protected area for the teacher: database size and
+per-table sizes, readings per day, per-username usage stats with
+misuse flags, a SQL console, and per-user detail with delete.
+
+- Set `ADMIN_PASSWORD` in the environment to enable it. If unset, `/admin`
+  returns 404. Use a long password; there is no login throttling.
+- Optionally set `SECRET_KEY` (otherwise derived from the password) and
+  `SESSION_COOKIE_SECURE=1` when served over HTTPS (set in `compose.yaml`).
+- The SQL console accepts a single SELECT-style statement and runs it in a
+  read-only transaction (10 s limit, 500 rows). The table is `data`.
+- Ticking "Allow changes" lets you run any other single statement. It first
+  copies every table into a `backup_<UTC time>` schema on the same server
+  (newest 5 kept; "Back up now" on the dashboard makes one on demand), then
+  runs the statement in a transaction that stays open. SELECTs then run
+  inside that transaction so you can review the result, and you Commit or
+  Roll back. Unattended changes roll back after 3 minutes idle.
+- Deleting a user's readings from their page is staged the same way.
+- Restore: the dashboard's "Restore deleted rows" loads an INSERT from a
+  backup into the console. Anything else is a manual query against the
+  backup schema.
+- Staged changes live in the web process, so the container runs one
+  gunicorn worker (with threads). Row-level changes don't block students;
+  DDL such as TRUNCATE or ALTER blocks their posts until you finish.
+- The console runs as the app's database user, which on Portainer is the
+  Postgres superuser, so treat the password accordingly.

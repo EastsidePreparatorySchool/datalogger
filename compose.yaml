@@ -1,5 +1,5 @@
 # Portainer stack for datalogger. Set POSTGRES_PASSWORD in the stack's
-# environment variables. The external `proxy` network must already exist
+# environment variables, plus ADMIN_PASSWORD for the /admin area. The external `proxy` network must already exist
 # (same one mycelio uses); point the reverse proxy at web:8000.
 services:
   db:
@@ -34,6 +34,8 @@ services:
         window: 120s
     environment:
       DATABASE_URL: postgresql://datalogger:${POSTGRES_PASSWORD}@db:5432/datalogger
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD}
+      SESSION_COOKIE_SECURE: "1"
     expose:
       - "8000"
     networks:

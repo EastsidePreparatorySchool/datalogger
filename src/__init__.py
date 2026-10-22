@@ -31,4 +31,7 @@ def init_app():
         from src.data.routes import bp as routes
         app.register_blueprint(routes)
 
+        from src.admin.routes import bp as admin_routes
+        app.register_blueprint(admin_routes)
+
         return app

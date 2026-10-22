@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>{% block title %}Admin{% endblock %} · EPS Datalogger</title>
+<style>
+  :root { --bg:#fff; --fg:#1b1f24; --muted:#59636e; --card:#f4f6f8; --line:#d8dee4; --accent:#0b6bcb; --warn:#9a4b00; --warnbg:#fff1e0; --bad:#b42318; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14181d; --fg:#e6e9ed; --muted:#9aa5b1; --card:#1e242b; --line:#2f3740; --accent:#6cb2ff; --warn:#ffb866; --warnbg:#3a2a14; --bad:#ff8a80; }
+  }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui, sans-serif; }
+  main { max-width:64rem; margin:0 auto; padding:1rem 1rem 4rem; }
+  a { color:var(--accent); }
+  nav { display:flex; gap:1rem; align-items:center; padding:.5rem 0 1rem; border-bottom:1px solid var(--line); }
+  nav form { margin-left:auto; }
+  h2 { margin-top:2rem; }
+  .muted { color:var(--muted); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(9rem, 1fr)); gap:.75rem; margin:1rem 0; }
+  .stat { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:.75rem 1rem; }
+  .stat b { display:block; font-size:1.5rem; }
+  .scroll { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; }
+  th, td { text-align:left; padding:.35rem .6rem; border-bottom:1px solid var(--line); vertical-align:top; }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .flag { display:inline-block; background:var(--warnbg); color:var(--warn); border-radius:4px; padding:0 .4rem; margin:0 .2rem .2rem 0; font-size:.8rem; }
+  .bar { background:var(--accent); height:.8rem; border-radius:3px; min-width:1px; }
+  textarea, input[type=password], input[type=text] { width:100%; box-sizing:border-box; background:var(--card); color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:.5rem; font:inherit; }
+  textarea { font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.9rem; min-height:9rem; }
+  button { font:inherit; padding:.4rem .9rem; border-radius:6px; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer; }
+  button.primary { background:var(--accent); color:var(--bg); border-color:var(--accent); }
+  button.danger { background:var(--bad); color:var(--bg); border-color:var(--bad); }
+  .notice { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:.5rem .75rem; margin:.75rem 0; }
+  .pending { background:var(--warnbg); border-color:var(--warn); }
+  .error { color:var(--bad); white-space:pre-wrap; }
+  .examples button { margin:0 .3rem .3rem 0; font-size:.85rem; }
+  .null { color:var(--muted); font-style:italic; }
+  td.cell { font-family:ui-monospace, Menlo, Consolas, monospace; font-size:.85rem; max-width:28rem; overflow-wrap:anywhere; }
+</style>
+</head>
+<body>
+<main>
+  {% if request.endpoint != 'admin.login' %}
+  <nav>
+    <b>EPS Datalogger admin</b>
+    <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('admin.sql') }}">SQL</a>
+    <a href="{{ url_for('data.home') }}">Public site</a>
+    <form method="post" action="{{ url_for('admin.logout') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button>Log out</button>
+    </form>
+  </nav>
+  {% endif %}
+  {% for message in get_flashed_messages() %}<p class="notice">{{ message }}</p>{% endfor %}
+  {% if pending and request.endpoint != 'admin.sql' %}
+  <p class="notice pending">{{ pending.steps|length }} change(s) staged and not committed (auto-rollback in {{ pending.seconds_left }} s). <a href="{{ url_for('admin.sql') }}">Review</a></p>
+  {% endif %}
+  {% block body %}{% endblock %}
+</main>
+</body>
+</html>
